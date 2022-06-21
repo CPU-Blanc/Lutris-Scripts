@@ -1,0 +1,92 @@
+name: "Koikatsu!"
+game_id: 43684
+game_slug: "koikatsu"
+slug: "koikatsu-betterrepack"
+runner: "wine"
+version: BetterRepack
+script:
+  files:
+  - mainGame: "N/A:Select the main game executable"
+  game:
+    arch: win64
+    exe: mainGame
+    launch_configs:
+    - exe: ./[UTILITY] KKManager/KKManager.exe
+      name: KKManager
+    - exe: CharaStudio.exe
+      name: CharaStudio
+    prefix: $GAMEDIR
+  installer:
+  - task:
+      arch: win64
+      description: Creating 64bit Wine prefix
+      name: create_prefix
+      prefix: $GAMEDIR
+  - task:
+      arch: win64
+      name: winekill
+      prefix: $GAMEDIR
+  - task:
+      app: corefonts
+      arch: win64
+      description: Installing fonts
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: dxvk
+      arch: win64
+      description: Installing dxvk
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: ole32
+      arch: win64
+      description: Installing ole32
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: dotnet35
+      arch: win64
+      description: Installing .NET 3.5.0. This WILL take a while and might hang...
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: dotnet472
+      arch: win64
+      description: Installing .NET 4.7.2. This WILL take a while and might hang...
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: win10
+      arch: win64
+      description: Setting Wine prefix to Windows 10
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      arch: win64
+      description: Allowing native winhttp wrapper to be loaded
+      name: set_regedit
+      path: HKEY_CURRENT_USER\Software\Wine\DllOverrides
+      key: winhttp
+      type: REG_SZ
+      value: native,builtin
+  - task:
+      arch: win64
+      description: Disabling WPF hardware acceleration
+      name: set_regedit
+      path: HKEY_CURRENT_USER\Software\Microsoft\Avalon.Graphics
+      key: DisableHWAcceleration
+      type: REG_DWORD
+      value: 1
+  - task:
+      arch: win64
+      description: Fixing mouse focus loss issues
+      name: set_regedit
+      path: HKEY_CURRENT_USER\Software\Wine\X11 Driver
+      key: UseTakeFocus
+      value: N
+  wine:
+    dxvk: true
+    esync: true
+    overrides:
+      winhttp: n,b
